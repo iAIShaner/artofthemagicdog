@@ -3,14 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art of the Magic Dog</title>
+    <title>Art of the Magic Dog | Spooky Arcade & Field Guides</title>
+    <!-- Tailwind CSS CDN for modern utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: system-ui, sans-serif; max-width: 650px; margin: 80px auto; padding: 0 20px; line-height: 1.6; color: #222; }
-        h1 { font-weight: 700; }
+        /* Custom Spooky Aesthetics & Animations */
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;600;800&display=swap');
+
+        .font-creepster {
+            font-family: 'Creepster', cursive;
+        }
+
+        body {
+            background-color: #0d0c11;
+            color: #f8f9fa;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 117, 24, 0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Glowing text effects */
+        .glow-orange {
+            text-shadow: 0 0 10px rgba(255, 117, 24, 0.7), 0 0 20px rgba(255, 117, 24, 0.4);
+        }
+        .glow-purple {
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.8), 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        /* Glassmorphism card container */
+        .spooky-card {
+            background: rgba(22, 20, 31, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(138, 43, 226, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Tile Puzzle styling */
+        .puzzle-tile {
+            transition: all 0.2s ease-in-out;
+            user-select: none;
+        }
+        .puzzle-tile:hover {
+            transform: scale(0.97);
+            filter: brightness(1.2);
+        }
+
+        /* Tic-Tac-Toe Grid Cell */
+        .ttt-cell {
+            transition: all 0.2s ease;
+        }
+        .ttt-cell:hover {
+            background-color: rgba(138, 43, 226, 0.2);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0c11;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff7518;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
-    <h1>Art of the Magic Dog</h1>
-    <p>Long-form essays, field guides, and digital publications.</p>
+<body class="min-h-screen flex flex-col justify-between font-sans antialiased selection:bg-orange-500 selection:text-black">
+
+    <!-- Top Spooky Header -->
+    <header class="w-full text-center pt-10 pb-6 px-4">
+        <div class="inline-block animate-float mb-2 text-5xl">🎃 🧙‍♂️ 👻</div>
+        <h1 class="text-5xl md:text-7xl font-creepster tracking-wider text-orange-500 glow-orange mb-3">
+            Art of the Magic Dog
+        </h1>
+        <p class="text-gray-400 text-sm md:text-base max-w-lg mx-auto font-light">
+            Welcome to the threshold. Play a spooky game, consult the Magic Dog, or stick around for upcoming digital field guides.
+        </p>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow">
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center mb-8 gap-2 md:gap-4 flex-wrap">
+            <button onclick="switchTab('ttt')" id="tab-ttt" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-orange-600 text-white shadow-lg shadow-orange-900/40">
+                🎃 Tic-Tac-Toe
+            </button>
+            <button onclick="switchTab('puzzle')" id="tab-puzzle" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+                🧩 Tile Slide Puzzle
+            </button>
+            <button onclick="switchTab('fortune')" id="tab-fortune" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+                🔮 Magic Dog Fortune
+            </button>
+            <button onclick="switchTab('sounds')" id="tab-sounds" class="tab-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-gray-800 text-gray-300 hover:bg-gray-700">
+                🔊 Sound Board
+            </button>
+        </div>
+
+        <!-- TAB 1: TIC-TAC-TOE -->
+        <section id="sec-ttt" class="tab-content block">
+            <div class="spooky-card rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-center">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-purple-400 glow-purple flex items-center gap-2">
+                            <span>🎃 vs 👻</span> Spooky Tic-Tac-Toe
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">Jack-o'-Lanterns fight the Ghosts!</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-900/80 p-1.5 rounded-lg border border-purple-900/50">
+                        <span class="text-xs text-gray-400 font-medium pl-1">Mode:</span>
+                        <select id="ttt-mode" onchange="resetTTT()" class="bg-purple-950 text-orange-400 text-xs rounded px-2 py-1 font-semibold focus:outline-none border border-purple-700">
+                            <option value="ai-easy">VS Easy AI</option>
+                            <option value="ai-hard" selected>VS Smart AI</option>
+                            <option value="pvp">2 Player Local</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status & Scoreboard -->
+                <div class="grid grid-cols-3 gap-2 mb-6 bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-sm">
+                    <div class="text-center">
+                        <span class="block text-gray-400 text-xs">Pumpkin (🎃)</span>
+                        <span id="score-x" class="text-lg font-bold text-orange-500">0</span>
+                    </div>
+                    <div class="text-center border-x border-gray-800">
+                        <span class="block text-gray-400 text-xs">Ties</span>
+                        <span id="score-ties" class="text-lg font-bold text-gray-300">0</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="block text-gray-400 text-xs">Ghost (👻)</span>
+                        <span id="score-o" class="text-lg font-bold text-purple-400">0</span>
+                    </div>
+                </div>
+
+                <div id="ttt-status" class="text-base font-semibold text-orange-400 mb-4 h-6">
+                    Pumpkin's Turn (🎃)
+                </div>
+
+                <!-- Game Grid -->
+                <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto aspect-square mb-6">
+                    <button onclick="makeTTTMove(0)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(1)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(2)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(3)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(4)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(5)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(6)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(7)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                    <button onclick="makeTTTMove(8)" class="ttt-cell rounded-xl bg-gray-900/90 border border-purple-900/40 text-4xl flex items-center justify-center font-bold h-24 shadow-inner"></button>
+                </div>
+
+                <button onclick="resetTTT()" class="bg-purple-900/80 hover:bg-purple-800 text-purple-200 border border-purple-600 px-6 py-2 rounded-xl text-sm font-semibold transition-all">
+                    Reset Board
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 2: SLIDING TILE PUZZLE -->
+        <section id="sec-puzzle" class="tab-content hidden">
+            <div class="spooky-card rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-center">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold text-orange-400 glow-orange">
+                        🧩 Halloween Sliding Puzzle
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Arrange the Halloween icons in numerical order (1 through 8)!</p>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="flex justify-around items-center bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-sm mb-6">
+                    <div>
+                        <span class="text-xs text-gray-400 block">Moves</span>
+                        <span id="puzzle-moves" class="text-lg font-bold text-orange-400">0</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-gray-400 block">Time</span>
+                        <span id="puzzle-time" class="text-lg font-bold text-purple-400">00:00</span>
+                    </div>
+                </div>
+
+                <!-- 3x3 Puzzle Container -->
+                <div id="puzzle-grid" class="grid grid-cols-3 gap-2.5 max-w-xs mx-auto aspect-square p-2 bg-gray-950 rounded-2xl border border-purple-900/60 mb-6 shadow-2xl">
+                    <!-- Dynamic Tiles Generated via JS -->
+                </div>
+
+                <div class="flex justify-center gap-3">
+                    <button onclick="initPuzzle()" class="bg-orange-600 hover:bg-orange-500 text-white font-semibold px-6 py-2 rounded-xl text-sm transition-all shadow-lg shadow-orange-950">
+                        Shuffle & Play
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: MAGIC 8-BALL DOG FORTUNE -->
+        <section id="sec-fortune" class="tab-content hidden">
+            <div class="spooky-card rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-center">
+                <h2 class="text-2xl font-bold text-purple-400 glow-purple mb-2">
+                    🔮 The Magic Dog Fortune Teller
+                </h2>
+                <p class="text-xs text-gray-400 mb-6">Ask a question in your mind, then disturb the mystical hound...</p>
+
+                <div class="relative my-8">
+                    <div id="fortune-orb" onclick="tellFortune()" class="w-44 h-44 mx-auto rounded-full bg-gradient-to-br from-purple-900 via-black to-indigo-950 border-2 border-purple-500/50 shadow-2xl shadow-purple-950 flex flex-col items-center justify-center p-4 cursor-pointer hover:scale-105 transition-transform duration-300 group">
+                        <span class="text-5xl mb-1 group-hover:animate-bounce">🐕‍🦺</span>
+                        <span id="fortune-text" class="text-xs text-purple-200 font-medium px-2 leading-snug">
+                            Click to reveal your fate...
+                        </span>
+                    </div>
+                </div>
+
+                <button onclick="tellFortune()" class="bg-purple-800 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-xl text-sm transition-all shadow-lg shadow-purple-950">
+                    Consult the Magic Dog
+                </button>
+            </div>
+        </section>
+
+        <!-- TAB 4: SOUND BOARD -->
+        <section id="sec-sounds" class="tab-content hidden">
+            <div class="spooky-card rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-center">
+                <h2 class="text-2xl font-bold text-orange-400 glow-orange mb-2">
+                    🔊 Spooky Synthesizer Sound Board
+                </h2>
+                <p class="text-xs text-gray-400 mb-6">Real-time Halloween sound synthesis powered by Web Audio API.</p>
+
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                    <button onclick="playSound('ghost')" class="bg-gray-900/90 hover:bg-purple-900/40 border border-purple-800/60 p-4 rounded-xl flex flex-col items-center gap-2 group transition-all">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">👻</span>
+                        <span class="text-sm font-semibold text-purple-300">Ghostly Wail</span>
+                    </button>
+                    <button onclick="playSound('witch')" class="bg-gray-900/90 hover:bg-orange-900/40 border border-orange-800/60 p-4 rounded-xl flex flex-col items-center gap-2 group transition-all">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">🧙‍♀️</span>
+                        <span class="text-sm font-semibold text-orange-300">Witch Cackle</span>
+                    </button>
+                    <button onclick="playSound('lightning')" class="bg-gray-900/90 hover:bg-yellow-900/40 border border-yellow-800/60 p-4 rounded-xl flex flex-col items-center gap-2 group transition-all">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">⚡</span>
+                        <span class="text-sm font-semibold text-yellow-300">Thunder Bolt</span>
+                    </button>
+                    <button onclick="playSound('bat')" class="bg-gray-900/90 hover:bg-gray-800 border border-gray-700 p-4 rounded-xl flex flex-col items-center gap-2 group transition-all">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">🦇</span>
+                        <span class="text-sm font-semibold text-gray-300">Bat Echo</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 text-xs text-gray-500 border-t border-purple-950/40 bg-black/40">
+        <p>&copy; 2026 Art of the Magic Dog. Hosted on GitHub Pages.</p>
+    </footer>
+
+    <!-- Game Logic & Web Audio Script -->
+    <script>
+        // --- Web Audio API Synthesizer (No external sound files required) ---
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'ghost') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.8);
+                    osc.frequency.exponentialRampToValueAtTime(200, now + 1.6);
+                    
+                    gain.gain.setValueAtTime(0.01, now);
+                    gain.gain.linearRampToValueAtTime(0.2, now + 0.5);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 1.6);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.6);
+
+                } else if (type === 'witch') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.setValueAtTime(1000, now + 0.1);
+                    osc.frequency.setValueAtTime(600, now + 0.2);
+                    osc.frequency.setValueAtTime(1100, now + 0.3);
+
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+
+                } else if (type === 'lightning') {
+                    const bufferSize = ctx.sampleRate * 0.5;
+                    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(800, now);
+                    filter.frequency.linearRampToValueAtTime(50, now + 0.5);
+
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+                    noise.start(now);
+
+                } else if (type === 'bat') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(2500, now);
+                    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                }
+            } catch (e) {
+                console.log("Audio play blocked or unsupported", e);
+            }
+        }
+
+        // --- Navigation Tab Switching ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-orange-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-gray-800', 'text-gray-300');
+            });
+
+            document.getElementById('sec-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('bg-gray-800', 'text-gray-300');
+            activeBtn.classList.add('bg-orange-600', 'text-white', 'shadow-lg');
+        }
+
+        // --- GAME 1: TIC-TAC-TOE ---
+        let tttBoard = ['', '', '', '', '', '', '', '', ''];
+        let tttCurrentPlayer = '🎃';
+        let tttGameActive = true;
+        let tttScores = { '🎃': 0, '👻': 0, 'ties': 0 };
+
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        function makeTTTMove(index) {
+            if (tttBoard[index] !== '' || !tttGameActive) return;
+
+            tttBoard[index] = tttCurrentPlayer;
+            renderTTT();
+            playSound('bat');
+
+            if (checkTTTWin(tttCurrentPlayer)) {
+                document.getElementById('ttt-status').innerText = `${tttCurrentPlayer} Wins the Halloween Clash!`;
+                tttScores[tttCurrentPlayer]++;
+                updateTTTScores();
+                tttGameActive = false;
+                playSound('witch');
+                return;
+            }
+
+            if (tttBoard.every(cell => cell !== '')) {
+                document.getElementById('ttt-status').innerText = "It's a Stalemate! Spooky Tie!";
+                tttScores.ties++;
+                updateTTTScores();
+                tttGameActive = false;
+                return;
+            }
+
+            tttCurrentPlayer = tttCurrentPlayer === '🎃' ? '👻' : '🎃';
+            document.getElementById('ttt-status').innerText = `${tttCurrentPlayer}'s Turn`;
+
+            // AI Turn if applicable
+            const mode = document.getElementById('ttt-mode').value;
+            if (tttGameActive && tttCurrentPlayer === '👻' && mode !== 'pvp') {
+                setTimeout(() => {
+                    let aiMove;
+                    if (mode === 'ai-easy') {
+                        const available = tttBoard.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+                        aiMove = available[Math.floor(Math.random() * available.length)];
+                    } else {
+                        aiMove = minimax(tttBoard, '👻').index;
+                    }
+                    makeTTTMove(aiMove);
+                }, 400);
+            }
+        }
+
+        function checkTTTWin(player) {
+            return winningCombos.some(combo => combo.every(idx => tttBoard[idx] === player));
+        }
+
+        function minimax(newBoard, player) {
+            const availSpots = newBoard.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+
+            if (checkTTTWin('🎃')) return { score: -10 };
+            if (checkTTTWin('👻')) return { score: 10 };
+            if (availSpots.length === 0) return { score: 0 };
+
+            const moves = [];
+            for (let i = 0; i < availSpots.length; i++) {
+                const move = {};
+                move.index = availSpots[i];
+                newBoard[availSpots[i]] = player;
+
+                if (player === '👻') {
+                    const result = minimax(newBoard, '🎃');
+                    move.score = result.score;
+                } else {
+                    const result = minimax(newBoard, '👻');
+                    move.score = result.score;
+                }
+
+                newBoard[availSpots[i]] = '';
+                moves.push(move);
+            }
+
+            let bestMove;
+            if (player === '👻') {
+                let bestScore = -10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            } else {
+                let bestScore = 10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            }
+            return moves[bestMove];
+        }
+
+        function renderTTT() {
+            const cells = document.querySelectorAll('.ttt-cell');
+            cells.forEach((cell, idx) => {
+                cell.innerText = tttBoard[idx];
+            });
+        }
+
+        function updateTTTScores() {
+            document.getElementById('score-x').innerText = tttScores['🎃'];
+            document.getElementById('score-o').innerText = tttScores['👻'];
+            document.getElementById('score-ties').innerText = tttScores.ties;
+        }
+
+        function resetTTT() {
+            tttBoard = ['', '', '', '', '', '', '', '', ''];
+            tttCurrentPlayer = '🎃';
+            tttGameActive = true;
+            document.getElementById('ttt-status').innerText = "Pumpkin's Turn (🎃)";
+            renderTTT();
+        }
+
+        // --- GAME 2: SLIDING TILE PUZZLE ---
+        const puzzleIcons = ['🎃', '👻', '🦇', '🕷️', '🐈‍⬛', '🧙‍♀️', '🕯️', '💀', ''];
+        let puzzleState = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 is blank
+        let puzzleMoves = 0;
+        let puzzleTimer = null;
+        let puzzleSeconds = 0;
+
+        function initPuzzle() {
+            puzzleMoves = 0;
+            puzzleSeconds = 0;
+            document.getElementById('puzzle-moves').innerText = '0';
+            document.getElementById('puzzle-time').innerText = '00:00';
+            clearInterval(puzzleTimer);
+
+            // Generate solvable shuffle
+            do {
+                puzzleState = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 0]);
+            } while (!isSolvable(puzzleState) || isPuzzleSolved());
+
+            renderPuzzle();
+
+            puzzleTimer = setInterval(() => {
+                puzzleSeconds++;
+                const mins = String(Math.floor(puzzleSeconds / 60)).padStart(2, '0');
+                const secs = String(puzzleSeconds % 60).padStart(2, '0');
+                document.getElementById('puzzle-time').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function isSolvable(arr) {
+            let inversions = 0;
+            const flat = arr.filter(x => x !== 0);
+            for (let i = 0; i < flat.length; i++) {
+                for (let j = i + 1; j < flat.length; j++) {
+                    if (flat[i] > flat[j]) inversions++;
+                }
+            }
+            return inversions % 2 === 0;
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function moveTile(index) {
+            const blankIdx = puzzleState.indexOf(0);
+            const validMoves = [
+                blankIdx - 1, blankIdx + 1, // left, right
+                blankIdx - 3, blankIdx + 3  // up, down
+            ];
+
+            // Prevent wrapping around rows
+            if ((blankIdx % 3 === 0 && index === blankIdx - 1) || 
+                (blankIdx % 3 === 2 && index === blankIdx + 1)) {
+                return;
+            }
+
+            if (validMoves.includes(index)) {
+                puzzleState[blankIdx] = puzzleState[index];
+                puzzleState[index] = 0;
+                puzzleMoves++;
+                document.getElementById('puzzle-moves').innerText = puzzleMoves;
+                playSound('bat');
+                renderPuzzle();
+
+                if (isPuzzleSolved()) {
+                    clearInterval(puzzleTimer);
+                    playSound('ghost');
+                    setTimeout(() => {
+                        alert(`🎃 Spooky Victory! Solved in ${puzzleMoves} moves & ${puzzleSeconds} seconds!`);
+                    }, 200);
+                }
+            }
+        }
+
+        function isPuzzleSolved() {
+            return puzzleState.slice(0, 8).every((val, idx) => val === idx + 1);
+        }
+
+        function renderPuzzle() {
+            const grid = document.getElementById('puzzle-grid');
+            grid.innerHTML = '';
+            puzzleState.forEach((val, idx) => {
+                const btn = document.createElement('button');
+                if (val === 0) {
+                    btn.className = 'puzzle-tile bg-gray-950/40 rounded-xl border border-dashed border-gray-800';
+                } else {
+                    btn.className = 'puzzle-tile bg-gradient-to-br from-purple-900/90 to-gray-900 border border-purple-600/50 rounded-xl flex flex-col items-center justify-center font-bold text-lg text-orange-400 shadow-md';
+                    btn.innerHTML = `<span class="text-2xl">${puzzleIcons[val - 1]}</span><span class="text-xs text-purple-300/80">${val}</span>`;
+                    btn.onclick = () => moveTile(idx);
+                }
+                grid.appendChild(btn);
+            });
+        }
+
+        // --- FEATURE 3: MAGIC DOG FORTUNE TELLER ---
+        const fortunes = [
+            "The Magic Dog sees a great surge of creativity in your future. 🎃",
+            "Beware of bloated WordPress code... embrace static HTML! ⚡",
+            "A mysterious $200 digital purchase is coming your way. 📜",
+            "The spirits say: Commit your changes to main and don't look back! 👻",
+            "A black cat will cross your pathway, bringing unexpected wisdom. 🐈‍⬛",
+            "The moon is full. Write your long-form essay tonight! 🌕",
+            "The Magic Dog barks thrice: Good fortune awaits your portfolio. 🐕",
+            "Uncertainty looms... clear your DNS cache and try again! 🔮"
+        ];
+
+        function tellFortune() {
+            playSound('ghost');
+            const textEl = document.getElementById('fortune-text');
+            textEl.innerText = "Consulting the realm...";
+            setTimeout(() => {
+                const randomFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                textEl.innerText = randomFortune;
+            }, 600);
+        }
+
+        // --- Initial Load Setup ---
+        window.onload = function() {
+            initPuzzle();
+            renderTTT();
+        };
+    </script>
 </body>
 </html>
